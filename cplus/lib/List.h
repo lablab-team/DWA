@@ -3,7 +3,8 @@
 
 #include <stdexcept>
 
-template <typename TYPE> class List
+template <typename TYPE>
+class List
 {
 private:
     TYPE *array = 0x00;
@@ -14,7 +15,7 @@ private:
 
     void Unallocate(TYPE *array);
 
-    int SortHelperPartition(int l, int r, int(*comparison)(TYPE, TYPE));
+    int SortHelperPartition(int l, int r, int (*comparison)(TYPE, TYPE));
 
 public:
     int Count() { return count; }
@@ -24,18 +25,18 @@ public:
     List();
     List(int capacity);
     List(const List &list);
-    List(List&& list);
+    List(List &&list);
     ~List();
 
-    List& operator=(const List &rList);
-    List& operator=(List&& rList);
+    List &operator=(const List &rList);
+    List &operator=(List &&rList);
 
     //TYPE* operator&() { return array; }
 
     //
-    // QÆ‰‰Zq[]‚ğg—p‚µ‚ÄƒAƒCƒeƒ€‚ÉƒAƒNƒZƒX‚µ‚Ü‚·.
+    // å‚ç…§æ¼”ç®—å­[]ã‚’ä½¿ç”¨ã—ã¦ã‚¢ã‚¤ãƒ†ãƒ ã«ã‚¢ã‚¯ã‚»ã‚¹ã—ã¾ã™.
     //
-    TYPE& operator[] (int index)
+    TYPE &operator[](int index)
     {
         if (index < 0 || index >= count)
         {
@@ -44,7 +45,7 @@ public:
         return array[index];
     }
 
-    TYPE* Array() { return array; }
+    TYPE *Array() { return array; }
     void Add(TYPE item);
     void Insert(int index, TYPE item);
     int IndexOf(TYPE item);
@@ -56,20 +57,18 @@ public:
     void Clear();
     void CopyFrom(const List &from);
     void MoveFrom(TYPE *from, int size);
-    void Sort(int(*comparison)(TYPE, TYPE));
+    void Sort(int (*comparison)(TYPE, TYPE));
 
     void Trim();
-
 };
 
-//ƒfƒtƒHƒ‹ƒgƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 template <typename TYPE>
 List<TYPE>::List()
 {
-
 }
 
-//—v‘f”w’èƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//è¦ç´ æ•°æŒ‡å®šã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 template <typename TYPE>
 List<TYPE>::List(int capacity)
 {
@@ -77,7 +76,7 @@ List<TYPE>::List(int capacity)
     this->capacity = capacity;
 }
 
-//ƒRƒs[ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ”ãƒ¼ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 template <typename TYPE>
 List<TYPE>::List(const List &list)
 {
@@ -85,46 +84,46 @@ List<TYPE>::List(const List &list)
     CopyFrom(list);
 }
 
-//ƒ€[ƒuƒRƒ“ƒXƒgƒ‰ƒNƒ^
-template<typename TYPE>
-List<TYPE>::List(List&& list)
+//ãƒ ãƒ¼ãƒ–ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+template <typename TYPE>
+List<TYPE>::List(List &&list)
 {
     Unallocate(array);
 
-    //ƒ|ƒCƒ“ƒ^‚Ì“ü‚ê‘Ö‚¦
+    //ãƒã‚¤ãƒ³ã‚¿ã®å…¥ã‚Œæ›¿ãˆ
     array = list.array;
 
-    //Œ³‚Ìlist‚Ìarray‚Ínull
+    //å…ƒã®listã®arrayã¯null
     list.array = 0x00;
 
     capacity = list.capacity;
     count = list.count;
 }
 
-//ƒfƒXƒgƒ‰ƒNƒ^
+//ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 template <typename TYPE>
 List<TYPE>::~List()
 {
     Unallocate(array);
 }
 
-//‘ã“ü‰‰Zq
+//ä»£å…¥æ¼”ç®—å­
 template <typename TYPE>
-List<TYPE>& List<TYPE>::operator=(const List &rList)
+List<TYPE> &List<TYPE>::operator=(const List &rList)
 {
     CopyFrom(rList);
     return (*this);
 }
 
 template <typename TYPE>
-List<TYPE>& List<TYPE>::operator=(List&& rList)
+List<TYPE> &List<TYPE>::operator=(List &&rList)
 {
     Unallocate(array);
 
-    //ƒ|ƒCƒ“ƒ^‚Ì“ü‚ê‘Ö‚¦
+    //ãƒã‚¤ãƒ³ã‚¿ã®å…¥ã‚Œæ›¿ãˆ
     array = rList.array;
 
-    //Œ³‚Ìlist‚Ìarray‚Ínull
+    //å…ƒã®listã®arrayã¯null
     rList.array = 0x00;
 
     capacity = rList.capacity;
@@ -134,10 +133,10 @@ List<TYPE>& List<TYPE>::operator=(List&& rList)
 }
 
 //
-// ƒRƒs[Œ³‚ÌƒŠƒXƒg‚ğ©g‚ÉƒRƒs[‚µ‚Ü‚·
+// ã‚³ãƒ”ãƒ¼å…ƒã®ãƒªã‚¹ãƒˆã‚’è‡ªèº«ã«ã‚³ãƒ”ãƒ¼ã—ã¾ã™
 //
 // @param &from:
-//  ƒRƒs[Œ³ƒŠƒXƒg
+//  ã‚³ãƒ”ãƒ¼å…ƒãƒªã‚¹ãƒˆ
 //
 template <typename TYPE>
 void List<TYPE>::CopyFrom(const List &from)
@@ -169,10 +168,9 @@ void List<TYPE>::MoveFrom(TYPE *from, int size)
     array = from;
 }
 
-
 //
-// List‚Ì—e—Ê‚ğİ’è‚µ‚Ü‚·.
-// Œ»İ‚Ì—v‘f”‚ğ‰º‰ñ‚Á‚Äİ’è‚·‚é‚±‚Æ‚Í‚Å‚«‚Ü‚¹‚ñ.
+// Listã®å®¹é‡ã‚’è¨­å®šã—ã¾ã™.
+// ç¾åœ¨ã®è¦ç´ æ•°ã‚’ä¸‹å›ã£ã¦è¨­å®šã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“.
 //
 template <typename TYPE>
 void List<TYPE>::SetCapacity(int capacity)
@@ -191,10 +189,10 @@ void List<TYPE>::SetCapacity(int capacity)
 }
 
 //
-// List‚Ì––”ö‚É—v‘f‚ğ’Ç‰Á‚µ‚Ü‚·.
+// Listã®æœ«å°¾ã«è¦ç´ ã‚’è¿½åŠ ã—ã¾ã™.
 //
 // @param item:
-//  ’Ç‰Á‚·‚éƒAƒCƒeƒ€
+//  è¿½åŠ ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ 
 //
 template <typename TYPE>
 void List<TYPE>::Add(TYPE item)
@@ -241,7 +239,6 @@ void List<TYPE>::Insert(int index, TYPE item)
         array[count - 1 - i] = array[count - 2 - i];
     }
     array[index] = item;
-
 }
 template <typename TYPE>
 void List<TYPE>::CopyTo(int index, TYPE *array, int arrayIndex, int count)
@@ -267,7 +264,7 @@ void List<TYPE>::RemoveAt(int index)
 
     int newCapacity = NewCapacity(--count);
     //if (nextCapacity > 0)
-    if(newCapacity > capacity)
+    if (newCapacity > capacity)
     {
         capacity = newCapacity;
 
@@ -285,7 +282,7 @@ void List<TYPE>::Clear()
 }
 
 template <typename TYPE>
-int  List<TYPE>::IndexOf(TYPE item)
+int List<TYPE>::IndexOf(TYPE item)
 {
     for (int i = 0; i < count; i++)
     {
@@ -298,9 +295,8 @@ int  List<TYPE>::IndexOf(TYPE item)
     return -1;
 }
 
-
 template <typename TYPE>
-int  List<TYPE>::LastIndexOf(TYPE item)
+int List<TYPE>::LastIndexOf(TYPE item)
 {
     for (int i = count - 1; i >= 0; i--)
     {
@@ -314,13 +310,13 @@ int  List<TYPE>::LastIndexOf(TYPE item)
 }
 
 template <typename TYPE>
-bool  List<TYPE>::Contains(TYPE item)
+bool List<TYPE>::Contains(TYPE item)
 {
     return IndexOf(item) >= 0;
 }
 
 template <typename TYPE>
-bool  List<TYPE>::Remove(TYPE item)
+bool List<TYPE>::Remove(TYPE item)
 {
     int rmvIndex = IndexOf(item);
     if (rmvIndex < 0)
@@ -332,14 +328,14 @@ bool  List<TYPE>::Remove(TYPE item)
     return true;
 }
 
-template<typename TYPE>
+template <typename TYPE>
 void List<TYPE>::Trim()
 {
     SetCapacity(count);
 }
 
 template <typename TYPE>
-int List<TYPE>::SortHelperPartition(int l, int r, int(*comparison)(TYPE, TYPE))
+int List<TYPE>::SortHelperPartition(int l, int r, int (*comparison)(TYPE, TYPE))
 {
     int i, j;
     TYPE pivot;
@@ -348,30 +344,32 @@ int List<TYPE>::SortHelperPartition(int l, int r, int(*comparison)(TYPE, TYPE))
     i = l - 1;
     j = r;
 
-    //ˆê”Ô‰E‘¤‚ğ•²‚É‚·‚é
+    //ä¸€ç•ªå³å´ã‚’æ¢è»¸ã«ã™ã‚‹
     pivot = array[r];
 
     for (;;)
     {
-        //ƒ|ƒCƒ“ƒ^i‚ğ‰E‚Éi‚ß‚é
-        while (comparison(array[++i], pivot) < 0);
+        //ãƒã‚¤ãƒ³ã‚¿iã‚’å³ã«é€²ã‚ã‚‹
+        while (comparison(array[++i], pivot) < 0)
+            ;
 
-        //ƒ|ƒCƒ“ƒ^j‚ğ¶‚Éi‚ß‚é
-        while (i < --j && comparison(pivot, array[j]) < 0);
+        //ãƒã‚¤ãƒ³ã‚¿jã‚’å·¦ã«é€²ã‚ã‚‹
+        while (i < --j && comparison(pivot, array[j]) < 0)
+            ;
 
-        //ƒ|ƒCƒ“ƒ^i, j‚ª‚Ô‚Â‚©‚é‚Æ‚«‚Íƒ‹[ƒv‚ğ”²‚¯‚é
+        //ãƒã‚¤ãƒ³ã‚¿i, jãŒã¶ã¤ã‹ã‚‹ã¨ãã¯ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹
         if (i >= j)
         {
             break;
         }
 
-        //“ü‚ê‘Ö‚¦‚é
+        //å…¥ã‚Œæ›¿ãˆã‚‹
         temp = array[i];
         array[i] = array[j];
         array[j] = temp;
     }
 
-    //array[i]‚Æ•²‚ğ“ü‚ê‚©‚¦‚é
+    //array[i]ã¨æ¢è»¸ã‚’å…¥ã‚Œã‹ãˆã‚‹
     temp = array[i];
     array[i] = array[r];
     array[r] = temp;
@@ -379,53 +377,52 @@ int List<TYPE>::SortHelperPartition(int l, int r, int(*comparison)(TYPE, TYPE))
 }
 
 //
-//Comparison‚É‚Â‚¢‚Ä:
-// ŠeƒAƒCƒeƒ€‚ğ”äŠr‚·‚é‚½‚ß‚ÌŠÖ”‚ğ—pˆÓ‚·‚é•K—v‚ª‚ ‚é.
+//Comparisonã«ã¤ã„ã¦:
+// å„ã‚¢ã‚¤ãƒ†ãƒ ã‚’æ¯”è¼ƒã™ã‚‹ãŸã‚ã®é–¢æ•°ã‚’ç”¨æ„ã™ã‚‹å¿…è¦ãŒã‚ã‚‹.
 //
-// @return 0‚æ‚è¬‚³‚¢:
-//  •À‚Ñ‘Ö‚¦‡˜‚É‚¨‚¢‚ÄA‚ÍB‚Ì‘O
+// @return 0ã‚ˆã‚Šå°ã•ã„:
+//  ä¸¦ã³æ›¿ãˆé †åºã«ãŠã„ã¦Aã¯Bã®å‰
 //
 // @return 0:
-//  •À‚Ñ‘Ö‚¦‡˜‚É‚¨‚¢‚ÄA‚ÆB‚Í“¯‚¶ˆÊ’u
+//  ä¸¦ã³æ›¿ãˆé †åºã«ãŠã„ã¦Aã¨Bã¯åŒã˜ä½ç½®
 //
-// @return 0‚æ‚è‘å‚«‚¢:
-//  •À‚Ñ‘Ö‚¦‡˜‚É‚¨‚¢‚ÄA‚ÍB‚ÌŒã‚ë
+// @return 0ã‚ˆã‚Šå¤§ãã„:
+//  ä¸¦ã³æ›¿ãˆé †åºã«ãŠã„ã¦Aã¯Bã®å¾Œã‚
 //
 template <typename TYPE>
-void List<TYPE>::Sort(int(*comparison)(TYPE, TYPE))
+void List<TYPE>::Sort(int (*comparison)(TYPE, TYPE))
 {
     int l, r, v;
     int low[30], high[30];
     int sp;
 
-    //ƒXƒ^ƒbƒN‚ğ‰Šú‰»‚·‚é
+    //ã‚¹ã‚¿ãƒƒã‚¯ã‚’åˆæœŸåŒ–ã™ã‚‹
     low[0] = 0;
     high[0] = count - 1;
     sp = 1;
 
-    //ƒXƒ^ƒbƒN‚ª‹ó‚É‚È‚é‚Ü‚ÅŒJ‚è•Ô‚·
+    //ã‚¹ã‚¿ãƒƒã‚¯ãŒç©ºã«ãªã‚‹ã¾ã§ç¹°ã‚Šè¿”ã™
     while (sp > 0)
     {
-        //ƒXƒ^ƒbƒN‚©‚ç®—ñ‚·‚é”ÍˆÍ‚ğæ‚èo‚·
+        //ã‚¹ã‚¿ãƒƒã‚¯ã‹ã‚‰æ•´åˆ—ã™ã‚‹ç¯„å›²ã‚’å–ã‚Šå‡ºã™
         sp--;
         l = low[sp];
         r = high[sp];
 
-        //®—ñ‚·‚é‚æ‚¤—v‘f‚ªˆê‚Â‚È‚ç‰½‚à‚µ‚È‚¢
+        //æ•´åˆ—ã™ã‚‹ã‚ˆã†è¦ç´ ãŒä¸€ã¤ãªã‚‰ä½•ã‚‚ã—ãªã„
         if (l >= r)
         {
-
         }
         else
         {
-            //•²v‚ğŠî€‚É•ªŠ„‚·‚é
+            //æ¢è»¸vã‚’åŸºæº–ã«åˆ†å‰²ã™ã‚‹
             v = SortHelperPartition(l, r, comparison);
 
-            //¶‰E‚Ì•”•ª”z—ñ‚Ì‚¤‚¿’Z‚¢‚Ù‚¤‚ğæ‚Éˆ—‚ğ‚·‚é
+            //å·¦å³ã®éƒ¨åˆ†é…åˆ—ã®ã†ã¡çŸ­ã„ã»ã†ã‚’å…ˆã«å‡¦ç†ã‚’ã™ã‚‹
             if (v - l < r - v)
             {
-                //¶•”•ª”z—ñ‚ğæ‚É®—ñ‚·‚é
-                //ƒXƒ^ƒbƒN‚È‚Ì‚Å‰E¶‚Ì‡‚ÉÏ‚Ş
+                //å·¦éƒ¨åˆ†é…åˆ—ã‚’å…ˆã«æ•´åˆ—ã™ã‚‹
+                //ã‚¹ã‚¿ãƒƒã‚¯ãªã®ã§å³å·¦ã®é †ã«ç©ã‚€
                 low[sp] = v + 1;
                 high[sp++] = r;
                 low[sp] = l;
@@ -433,8 +430,8 @@ void List<TYPE>::Sort(int(*comparison)(TYPE, TYPE))
             }
             else
             {
-                //‰E•”•ª”z—ñ‚ğæ‚É®—ñ‚·‚é
-                //ƒXƒ^ƒbƒN‚È‚Ì‚Å¶‰E‚Ì‡‚ÉÏ‚Ş
+                //å³éƒ¨åˆ†é…åˆ—ã‚’å…ˆã«æ•´åˆ—ã™ã‚‹
+                //ã‚¹ã‚¿ãƒƒã‚¯ãªã®ã§å·¦å³ã®é †ã«ç©ã‚€
                 low[sp] = l;
                 high[sp++] = v - 1;
                 low[sp] = v + 1;
@@ -445,21 +442,22 @@ void List<TYPE>::Sort(int(*comparison)(TYPE, TYPE))
 }
 
 //
-// w’è‚³‚ê‚½—v‘f”‚É‘Î‚·‚éİ’è‚·‚×‚«—e—Ê’l‚ğ•Ô‚µ‚Ü‚·.
-// w’è‚³‚ê‚½—v‘f”‚ªŒ»İ‚Ì—e—Ê’l‚ğã‰ñ‚Á‚Ä‚¢‚È‚¢ê‡‚Í, Œ»İ‚Ì—e—Ê’l‚ğ•Ô‚µ‚Ü‚·.
-// 
-//  
+// æŒ‡å®šã•ã‚ŒãŸè¦ç´ æ•°ã«å¯¾ã™ã‚‹è¨­å®šã™ã¹ãå®¹é‡å€¤ã‚’è¿”ã—ã¾ã™.
+// æŒ‡å®šã•ã‚ŒãŸè¦ç´ æ•°ãŒç¾åœ¨ã®å®¹é‡å€¤ã‚’ä¸Šå›ã£ã¦ã„ãªã„å ´åˆã¯, ç¾åœ¨ã®å®¹é‡å€¤ã‚’è¿”ã—ã¾ã™.
+//
+//
 // @param nextCount:
-//  İ’è‚µ‚½‚¢ƒŠƒXƒg‚Ì—v‘f”
-// 
+//  è¨­å®šã—ãŸã„ãƒªã‚¹ãƒˆã®è¦ç´ æ•°
+//
 // @return:
-//  Šm•Û‚³‚ê‚é‚×‚«—e—Ê’l
-//  ‚±‚Ì’l‚ªŒ»İ‚Ì—e—Ê’l‚ğã‰ñ‚Á‚Ä‚¢‚é(‚æ‚è‘å‚«‚¢)ê‡‚ÍV‚µ‚­ƒƒ‚ƒŠ‚ğŠm•Û‚·‚×‚«‚Å‚·.
+//  ç¢ºä¿ã•ã‚Œã‚‹ã¹ãå®¹é‡å€¤
+//  ã“ã®å€¤ãŒç¾åœ¨ã®å®¹é‡å€¤ã‚’ä¸Šå›ã£ã¦ã„ã‚‹(ã‚ˆã‚Šå¤§ãã„)å ´åˆã¯æ–°ã—ããƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã™ã¹ãã§ã™.
 //
 template <typename TYPE>
 int List<TYPE>::NewCapacity(int newCount)
 {
-    if(newCount <= capacity){
+    if (newCount <= capacity)
+    {
         return capacity;
     }
     int pow = 0;
@@ -472,7 +470,7 @@ int List<TYPE>::NewCapacity(int newCount)
 
     int newCapacity = (0x01) << pow;
 
-    // Capacity‚ÍÅ’á4‚É‚·‚é.
+    // Capacityã¯æœ€ä½4ã«ã™ã‚‹.
     if (newCapacity < 4)
     {
         newCapacity = 4;
@@ -489,9 +487,9 @@ void List<TYPE>::Unallocate(TYPE *array)
         //printf("deleted: %p\n", array);
 
         //memo:
-        //  ”z—ñŠJ•ú‚Ì‚Æ‚«‚Í
-        //      delete[] ƒCƒ“ƒXƒ^ƒ“ƒX–¼
-        //  ‚Æ‘‚©‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+        //  é…åˆ—é–‹æ”¾ã®ã¨ãã¯
+        //      delete[] ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å
+        //  ã¨æ›¸ã‹ãªã‘ã‚Œã°ãªã‚‰ãªã„
         delete[] array;
 
         array = 0x00;
