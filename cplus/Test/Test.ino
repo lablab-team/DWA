@@ -24,6 +24,18 @@ void setup()
 
     // Serial.println((int)vecB.v);
     Serial.println(vecA.x);
+
+    List<int> list;
+    list.Add(1);
+    list.Add(2);
+    list.Add(3);
+    list.Add(4);
+    list.Add(5);
+
+    for (int i = 0; i < list.Count(); i++)
+    {
+        Serial.println(list[i]);
+    }
 }
 
 void loop()
